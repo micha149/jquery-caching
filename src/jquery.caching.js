@@ -1,5 +1,10 @@
 (function($) {
 
+    /**
+     * jQuery Caching Utilities
+     *
+     * This object provides caching utilities for jQuery.
+     */
     jQuery.caching = {
 
         /**
@@ -35,6 +40,11 @@
             $.extend(self.settings, options);
         },
 
+        /**
+         * Returns the timestamp on wich the new cache expires
+         *
+         * @return {integer} Timestamp
+         */
         getNewCachedUntil: function() {
             var self     = this,
                 settings = self.settings,
@@ -42,6 +52,12 @@
             return settings.cachetime + time;
         },
 
+        /**
+         * Caches the given object using the given key.
+         *
+         * @param {string} key  Cache identiier
+         * @param {mixed}  data Object or String to cache
+         */
         save: function(key, data) {
             var self        = this,
                 cacheObject = {
@@ -56,11 +72,13 @@
         },
 
         /**
-         * Writes data to localStorage
+         * Writes data hash to browsers localStorage
          */
         writeData: function() {
             var self = this;
-            window.localStorage['jquery.caching'] = self.data;
+            if (self.cancache) {
+                window.localStorage['jquery.caching'] = self.data;
+            }
         }
         
     }
