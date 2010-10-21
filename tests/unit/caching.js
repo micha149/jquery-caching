@@ -2,6 +2,9 @@ jQuery(function() {
 
    module('jquery-caching');
 
+   /**
+    * Tests if the object is available
+    */
    test('Plugin available', function() {
 
        ok(typeof jQuery.caching == 'object', 'Object exists');
@@ -39,12 +42,27 @@ jQuery(function() {
 
    })
 
-   test('GetCachedUnit', function() {
-      Date.prototype.getTime = function() {
-          return 100;
-      }
-      jQuery.caching.settings.cachetime = 3600;
-      equal(jQuery.caching.getNewCachedUntil(), 3700, 'New Cached Until');
-   });
+   /**
+    * Tests calculation of the cache until time
+    */
+    test('GetCachedUntil', function() {
+
+        var originalGetTime = Date.prototype.getTime;
+        expect(4);
+
+        // Overload getTime function to get a specific result
+        Date.prototype.getTime = function() {
+            ok(true, 'Date.getTime() called');
+            return 10000;
+        }
+
+        equal(jQuery.caching.getNewCachedUntil(), 13600, 'Get timestamp with default cachetime');
+
+        jQuery.caching.setup({ cachetime: 84000 });
+        equal(jQuery.caching.getNewCachedUntil(), 94000, 'Get timestamp with custom cachetime');
+
+        // Restore original getTime function
+        Date.prototype.getTime = originalGetTime;
+    });
    
 });
