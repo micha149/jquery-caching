@@ -21,13 +21,14 @@ jQuery(function() {
 
        var expectedString = 'This is a simple Teststring',
            expectedObject = { key1: 'value1', key2: 'value2'},
-           expectedJQuery = jQuery('<div>').addClass('testClass').text('some text');
-           expectedKey    = 'myTestKey';
+           expectedJQuery = jQuery('<div>').addClass('testClass').text('some text'),
+           expectedKey    = 'myTestKey',
+           originalWriteData = jQuery.caching._writeData;
 
        ok(typeof jQuery.caching.save == 'function', 'Save funtion exists');
 
        // Overload method to check if it is called by save()
-       jQuery.caching.writeData = function() {
+       jQuery.caching._writeData = function() {
            ok(true, 'Write access to local storage');
        }
 
@@ -40,6 +41,8 @@ jQuery(function() {
        jQuery.caching.save(expectedKey, expectedJQuery);
        same(jQuery.caching.data[expectedKey].content, expectedJQuery, 'jQuery Object in Data hash');
 
+       // Restore write data method
+       jQuery.caching._writeData = originalWriteData;
    })
 
    /**
@@ -65,4 +68,23 @@ jQuery(function() {
         Date.prototype.getTime = originalGetTime;
     });
    
+    /**
+     * Tests writing to local storage
+     */
+    test('_writeData', function() {
+        var expectedData = {
+            'testKey': {
+                'key': 'testKey',
+                'content': "Test Data",
+                'tags': ['tagA', 'tagB']
+            }
+        };
+
+        jQuery.caching.data = expectedData;
+        jQuery.caching._writeData();
+
+        var actualData = JSON.parse (window.localStorage['jquery.caching']);
+        same(actualData, expectedData, 'Expected object found in local Storage');
+    });
+
 });
