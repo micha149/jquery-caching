@@ -91,10 +91,11 @@
          * Writes data hash to browsers localStorage
          */
         _writeData: function () {
-            var self = this,
-                json = JSON.stringify(self.data);
+            var self       = this,
+                storageKey = self.settings.storageKey,
+                json       = JSON.stringify(self.data);
             if (self.cancache) {
-                window.localStorage['jquery.caching'] = json;
+                window.localStorage[storageKey] = json;
             }
         }
 
