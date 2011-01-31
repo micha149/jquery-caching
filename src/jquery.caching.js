@@ -12,7 +12,7 @@
          *
          * @var {boolean} Storage available
          */
-        cancache: (typeof window.localStorage != 'undefined'),
+        cancache: (typeof window.localStorage !== 'undefined'),
 
         /**
          * The cached data, identified by its keys
@@ -27,7 +27,8 @@
          * @var {object} Settings hash
          */
         settings: {
-            cachetime: 3600
+            cachetime: 3600,
+            storageKey: 'jquery.caching'
         },
 
         /**
@@ -35,7 +36,7 @@
          *
          * @param {object} options
          */
-        setup: function(options) {
+        setup: function (options) {
             var self = this;
             $.extend(self.settings, options);
         },
@@ -45,7 +46,7 @@
          *
          * @return {integer} Timestamp
          */
-        getNewCachedUntil: function() {
+        getNewCachedUntil: function () {
             var self     = this,
                 settings = self.settings,
                 time     = new Date().getTime();
@@ -58,7 +59,7 @@
          * @param {string} key  Cache identiier
          * @param {mixed}  data Object or String to cache
          */
-        save: function(key, data) {
+        save: function (key, data) {
             var self        = this,
                 cacheObject = {
                     content: data,
@@ -68,19 +69,35 @@
 
             self.data[key] = cacheObject;
 
-            self.writeData();
+            self._writeData();
+        },
+
+        /**
+         * Loads a cached object sing the given key
+         */
+        load: function (key) {
+            var self = this;
+
+            self._loadData();
+
+            if(self.data[key] === undefined) {
+                return false;
+            }
+
+            return self.data[key].content;
         },
 
         /**
          * Writes data hash to browsers localStorage
          */
-        writeData: function() {
-            var self = this;
+        _writeData: function () {
+            var self = this,
+                json = JSON.stringify(self.data);
             if (self.cancache) {
-                window.localStorage['jquery.caching'] = self.data;
+                window.localStorage['jquery.caching'] = json;
             }
         }
-        
-    }
 
-})(jQuery);
+    };
+
+}(jQuery));
