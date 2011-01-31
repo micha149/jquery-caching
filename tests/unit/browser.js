@@ -18,7 +18,7 @@ jQuery(function() {
 
        ok(typeof JSON == 'object', 'JSON object exists');
        ok(typeof JSON.stringify == 'function', 'JSON.stringify exists')
-
+       ok(typeof JSON.parse == 'function', 'JSON.parse exists')
    });
    
 });
