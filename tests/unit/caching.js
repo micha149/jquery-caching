@@ -72,7 +72,8 @@ jQuery(function() {
      * Tests writing to local storage
      */
     test('_writeData', function() {
-        var expectedData = {
+        var actualData,
+            expectedData = {
             'testKey': {
                 'key': 'testKey',
                 'content': "Test Data",
@@ -83,8 +84,14 @@ jQuery(function() {
         jQuery.caching.data = expectedData;
         jQuery.caching._writeData();
 
-        var actualData = JSON.parse (window.localStorage['jquery.caching']);
+        actualData= JSON.parse (window.localStorage['jquery.caching']);
         same(actualData, expectedData, 'Expected object found in local Storage');
+
+        jQuery.caching.settings.storageKey = 'myTestKey';
+        jQuery.caching._writeData();
+
+        actualData= JSON.parse (window.localStorage['myTestKey']);
+        same(actualData, expectedData, 'Expected object found with custom storage key');
     });
 
 });
